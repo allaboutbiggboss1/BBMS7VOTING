@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Bigg Boss Malayalam Voting</title>
+    <style>
+        /* Your existing CSS - no changes here as it's likely not the cause of missing content */
+        body {
+            margin: 0;
+            font-family: 'Popins', sans-serif;
+            background: radial-gradient(#220f24, #0e0e14);
+            color: white;
+            text-align: center;
+            overflow-x: hidden;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px 0;
+            background: #15131a;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .header img {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+        }
+
+        .center-logo {
+            width: 80px;
+        }
+
+        h1 {
+            font-size: 22px;
+            font-weight: 800;
+            margin: 20px 0 5px;
+        }
+
+        h2 {
+            color: #ffbb3f;
+            margin: 0;
+            font-size: 13px;
+        }
+
+        .week {
+            font-weight: bold;
+            margin: 8px 0 3px;
+            color: red;
+        }
+
+        .votes-left {
+            font-size: 14px;
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+
+        .vote-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            padding: 0 20px;
+            justify-items: center;
+        }
+
+        .vote-card {
+            background: #1f1b2e;
+            border-radius: 20px;
+            padding: 10px;
+            width: 140px;
+            box-shadow: 0 0 15px #000;
+        }
+
+        .vote-card img {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 3px solid #ff4f4f;
+            margin-bottom: 8px;
+            object-fit: cover;
+        }
+
+        .vote-card .your-vote {
+            font-size: 12px;
+            color: #ffbb3f;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .vote-card .name {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .vote-card button {
+            background: linear-gradient(to right, #ff4f4f, #ff6961);
+            border: none;
+            color: white;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 0 10px #ff4f4f;
+        }
+
+        .update-title {
+            font-weight: bold;
+            margin: 30px 0 15px;
+            font-size: 18px;
+        }
+
+        .bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 20px;
+        }
+
+        .bar img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 3px solid #ff4f4f;
+            object-fit: cover;
+        }
+
+        .bar-track {
+            background: #3e3e4e;
+            border-radius: 20px;
+            height: 15px;
+            width: 60%;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            background: linear-gradient(to right, #ff4f4f, #ff6e6e);
+            height: 100%;
+            width: 0;
+            transition: width 0.5s ease;
+        }
+
+        .bar span {
+            width: 25px;
+        }
+
+        .footer {
+            margin: 40px 0 20px;
+        }
+
+        .footer-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .footer-follow {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .follow-card {
+            text-align: center;
+        }
+
+        .follow-card img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-bottom: 5px;
+            object-fit: cover;
+        }
+
+        .follow-card button {
+            margin-top: 5px;
+            padding: 5px 20px;
+            border: none;
+            background: #00bfff;
+            color: white;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Styles for the custom alert pop-up */
+        .custom-alert-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .custom-alert-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .custom-alert-box {
+            background: #1f1b2e;
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            max-width: 300px;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .custom-alert-overlay.show .custom-alert-box {
+            transform: scale(1);
+        }
+
+        .custom-alert-box h3 {
+            margin-top: 0;
+            color: #ff4f4f;
+            font-size: 20px;
+        }
+
+        .custom-alert-box p {
+            margin-bottom: 20px;
+            font-size: 15px;
+        }
+
+        .custom-alert-box button {
+            background: linear-gradient(to right, #ff4f4f, #ff6961);
+            border: none;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 0 10px #ff4f4f;
+        }
+
+        @media(min-width: 480px) {
+            body {
+                max-width: 430px;
+                margin: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <img src="assets-left-logo.png" alt="Insta 1" />
+        <img class="center-logo" src="assets-bigg-boss-logo.png" alt="Bigg Boss" />
+        <img src="assets-right-logo.png" alt="Insta 2" />
+    </div>
+
+    <h1>BIGGBOSS MALAYALAM</h1>
+    <h2>SEASON 7 UNOFFICIAL VOTING</h2>
+
+    <div class="week">WEEK 1</div>
+
+    <div class="votes-left" id="votesLeft">25 votes left</div>
+
+    <div class="vote-grid" id="voteGrid"></div>
+
+    <div class="update-title">LIVE UNOFFICIAL VOTE UPDATE</div>
+
+    <div id="voteBars"></div>
+
+    <div class="footer">
+        <div class="footer-title">FOLLOW THESE PAGE'S FOR LATEST UPDATES</div>
+        <div class="footer-follow">
+            <div class="follow-card">
+                <img src="assets-left-logo.png" alt="Insta" />
+                <div>BIGGBOSSMALAYALAM_INSTA</div>
+                <a href="https://www.instagram.com/biggbossmalayalam_insta?igsh=MW95N3QxZXoxNHFOMg==" target="_blank">
+                    <button>FOLLOW</button>
+                </a>
+            </div>
+            <div class="follow-card">
+                <img src="assets-right-logo.png" alt="Insta" />
+                <div>ALLABOUTBIGGBOSS</div>
+                <a href="https://www.instagram.com/allaboutbiggboss?igsh=d3NzcjByeWZ2dTlw" target="_blank">
+                    <button>FOLLOW</button>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="custom-alert-overlay" id="customAlertOverlay">
+        <div class="custom-alert-box">
+            <h3>Vote Limit Reached!</h3>
+            <p>You have used all your 25 votes for today. Come back Tomorrow for more!</p>
+            <button id="closeAlertButton">OK</button>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+    <script>
+        //** IMPORTANT: REPLACE THESE PLACEHOLDERS WITH YOUR ACTUAL FIREBASE CONFIGURATION **
+        // Get this from your Firebase Project settings -> Project settings -> Your apps -> Web app
+        // The 'databaseURL' field is absolutely necessary for Realtime Database.
+        const firebaseConfig = {
+            apiKey: "AlzaSyBhQAuitJEYIIYx2YtDoq8e-vU-WOLYsWg", // Example: "AlzaSyC0-XXXXXXXXXXXX_XXXXXXXXXXXXXXXX"
+            authDomain: "bbmvoting-6b8e3.firebaseapp.com", // Example: "your-project-id.firebaseapp.com"
+            databaseURL: "https://bbmvoting-6b8e3-default-rtdb.firebaseio.com", // Example: "https://your-project-id-default-rtdb.firebaseio.com"
+            projectId: "bbmvoting-6b8e3", // Example: "your-project-id"
+            storageBucket: "bbmvoting-6b8e3.firebasestorage.app", // Example: "your-project-id.appspot.com"
+            messagingSenderId: "505330788011", // Example: "123456789012"
+            appId: "1:505330788011:web:dbeb07e6f37c6ace3e39ee", // Example: "1:123456789012:web:abcdef1234567890abcdef"
+        };
+
+        let db; // Declare db variable here, assign in try-catch
+
+        try {
+            // Initialize Firebase app
+            firebase.initializeApp(firebaseConfig);
+            // Get a reference to the Realtime Database service
+            db = firebase.database();
+            console.log("Firebase Realtime Database initialized successfully.");
+        } catch (e) {
+            console.error("Firebase Initialization Error:", e);
+            console.error("Please double-check your firebase Config values. If databaseURL is missing or incorrect, Realtime DB will fail.");
+            // Stop execution if Firebase fails to initialize, as voting won't work
+            document.body.innerHTML = '<h1>Error: Failed to initialize Firebase. Check console for details.</h1>';
+            throw new Error("Firebase initialization failed."); // Stop script
+        }
+
+        // Contestants data: keys MUST match the vote keys (vote1, vote2, etc.) in your database structure
+        const contestants = [
+            { key: "vote1", name: "Jinto", image: "contestant-images.png", userVotes: 0 },
+            { key: "vote2", name: "Sreerekha", image: "contestant-images.png", userVotes: 0 },
+            { key: "vote3", name: "Noreena", image: "contestant-images.png", userVotes: 0 },
+            { key: "vote4", name: "Syam", image: "contestant-images.png", userVotes: 0 }
+        ];
+
+        // Reference to the 'votes' node in Realtime Database.
+        // This will be the root object containing all individual vote counts.
+        const votesRef = db.ref("votes");
+        const voteLimit = 25;
+
+        // **FIXED LINE**: Initialize votesLeft from localStorage, correctly handling 0 votes left.
+        let votesLeft;
+        const storedVotesLeftValue = localStorage.getItem("votesLeft");
+        if (storedVotesLeftValue === null || storedVotesLeftValue === undefined) {
+            // If not found in localStorage, assume first visit or clean state
+            votesLeft = voteLimit;
+        } else {
+            // If found, convert to number. If it's "0", it should be 0.
+            votesLeft = Number(storedVotesLeftValue);
+            // Add a check in case it's NaN from a corrupted string, default to 0
+            if (isNaN(votesLeft)) {
+                votesLeft = 0;
+            }
+        }
+
+        // --- UI Elements (Robust checks for IDs)
+        const voteGrid = document.getElementById("voteGrid");
+        if (!voteGrid) console.error("CRITICAL ERROR: HTML element with ID 'voteGrid' not found. Voting cards will not be displayed. Check your HTML for typos!");
+        const voteBars = document.getElementById("voteBars");
+        if (!voteBars) console.error("CRITICAL ERROR: HTML element with ID 'voteBars' not found. Live update bars will not be displayed. Check your HTML for typos!");
+        const votesLeftEl = document.getElementById("votesLeft");
+        if (!votesLeftEl) console.error("CRITICAL ERROR: HTML element with ID 'votesLeft' not found. Votes left display will be missing. Check your HTML for typos!");
+        const alertOverlay = document.getElementById("customAlertOverlay");
+        if (!alertOverlay) console.error("CRITICAL ERROR: HTML element with ID 'customAlertOverlay' not found. Alert system will not work. Check your HTML for typos!");
+        const closeAlertButton = document.getElementById("closeAlertButton");
+        if (!closeAlertButton) console.error("CRITICAL ERROR: HTML element with ID 'closeAlertButton' not found. Alert close button will not work. Check your HTML for typos!");
+
+        // Add event listener only if the button exists
+        if (closeAlertButton && alertOverlay) {
+            closeAlertButton.addEventListener("click", () => {
+                alertOverlay.classList.remove("show");
+            });
+        }
+
+        //--- Local Storage Management for Daily Votes
+
+        /**
+         * Checks if a new day has started and resets user's votes in localStorage if it has.
+         * Updates local vote counts and the UI.
+         */
+        function resetVotesIfNeeded() {
+            console.log("resetVotesIfNeeded() called.");
+            const lastReset = localStorage.getItem("lastResetDate");
+            const today = new Date().toISOString().slice(0, 10); // Format:YYYY-MM-DD
+
+            if (lastReset !== today) {
+                console.log("New day detected. Resetting votes.");
+                localStorage.setItem("lastResetDate", today);
+                localStorage.setItem("votesLeft", voteLimit);
+                contestants.forEach(c => {
+                    localStorage.setItem(c.key, "0"); // Reset individual contestant votes for the user
+                    c.userVotes = 0; // Reset in memory
+                });
+                votesLeft = voteLimit; // Reset overall votes left
+            } else {
+                console.log("Same day. Loading votes from localStorage.");
+                // Ensure votesLeft is loaded correctly even if 0.
+                const storedValueOnSameDay = localStorage.getItem("votesLeft");
+                if (storedValueOnSameDay !== null) {
+                    votesLeft = Number(storedValueOnSameDay);
+                    if (isNaN(votesLeft)) votesLeft = 0; // Handle corrupted data
+                } else {
+                    votesLeft = voteLimit; // Should ideally not happen if saved before, but as a fallback
+                }
+
+                contestants.forEach(c => {
+                    c.userVotes = Number(localStorage.getItem(c.key)) || 0;
+                });
+            }
+            updateVotesLeftUI(); // Update the displayed votes left
+        }
+
+        /**
+         * Updates the text displaying how many votes the user has left.
+         */
+        function updateVotesLeftUI() {
+            if (votesLeftEl) { // Ensure element exists before updating
+                votesLeftEl.textContent = votesLeft + " votes left";
+            }
+            console.log("Votes left UI updated:", votesLeft);
+        }
+
+        /**
+         * Saves the current votesLeft and individual contestant votes to localStorage.
+         */
+        function saveVotesLeft() {
+            localStorage.setItem("votesLeft", votesLeft);
+            contestants.forEach(c => {
+                localStorage.setItem(c.key, c.userVotes);
+            });
+            console.log("Votes saved to localStorage.");
+        }
+
+        // --- UI Rendering Functions
+
+        /**
+         * Dynamically creates the voting cards for each contestant.
+         */
+        function createVoteCards() {
+            console.log("createVoteCards() called. Attempting to render cards.");
+            if (!voteGrid) { // Safety check - already logged by initial check, but good to have
+                console.error("createVoteCards: voteGrid element not found. Cannot render cards.");
+                return;
+            }
+
+            voteGrid.innerHTML = ""; // Clear existing cards
+
+            contestants.forEach((contestant) => {
+                const card = document.createElement("div");
+                card.className = "vote-card";
+                const userVoteCount = contestant.userVotes;
+
+                // Added onerror to image tags for visual feedback if images are missing
+                card.innerHTML = `
+                    <img src="${contestant.image}" alt="${contestant.name}"
+                        onerror="this.onerror=null;this.src='https://via.placeholder.com/70?text=No+Img';" />
+                    <div class="your-vote">Your Votes: <span
+                        id="yourVote_${contestant.key}">${userVoteCount}</span></div>
+                    <div class="name">${contestant.name}</div>
+                    <button id="voteBtn_${contestant.key}">VOTE</button>
+                `;
+                voteGrid.appendChild(card);
+
+                // console.log('Card created for: ${contestant.name}'); // Debugging individual card creation
+
+                // Add event listener to the vote button
+                const btn = card.querySelector("button");
+                if (btn) { // Ensure button exists before adding listener
+                    btn.addEventListener("click", () => {
+                        voteForContestant(contestant.key);
+                    });
+                }
+            });
+            if (contestants.length === 0) {
+                console.warn("Contestants array is empty. No vote cards will be displayed.");
+            }
+        }
+
+        /**
+         * Updates the live vote percentage bars based on data from Realtime Database.
+         * @param {Object} votes - The object containing vote counts for each contestant (e.g., { "vote1": 10, "vote2": 5 }).
+         */
+        function updateVoteBars(votes) {
+            console.log("updateVoteBars() called. Attempting to render bars with votes:", votes);
+            if (!voteBars) { // Safety check
+                console.error("updateVoteBars: voteBars element not found. Cannot render bars.");
+                return;
+            }
+            voteBars.innerHTML = ""; // Clear existing bars
+
+            let totalVotes = 0;
+            contestants.forEach(c => {
+                totalVotes += votes[c.key] || 0; // Use 0 if vote count is undefined/null
+            });
+
+            totalVotes = totalVotes || 1; // Prevent division by zero if no votes yet (ensure at least 1)
+
+            contestants.forEach(contestant => {
+                const currentVotes = votes[contestant.key] || 0; // Get vote count for current contestant
+                const percentage = Math.round((currentVotes / totalVotes) * 100);
+                const bar = document.createElement("div");
+                bar.className = "bar";
+                // Added onerror to image tags for visual feedback if images are missing
+                bar.innerHTML = `
+                    <img src="${contestant.image}" alt="${contestant.name}"
+                        onerror="this.onerror=null;this.src='https://via.placeholder.com/40?text=No+Img';" />
+                    <div class="bar-track">
+                        <div class="bar-fill" style="width: ${percentage}%;"></div>
+                    </div>
+                    <span>${percentage}%</span>
+                `;
+                voteBars.appendChild(bar);
+            });
+        }
+
+        /**
+         * Updates the 'Your Votes' count displayed on each contestant card.
+         */
+        function updateUserVotesUI() {
+            console.log("updateUserVotesUI() called.");
+            contestants.forEach(contestant => {
+                const yourVoteSpan = document.getElementById(`yourVote_${contestant.key}`);
+                if (yourVoteSpan) { // Ensure element exists before updating
+                    yourVoteSpan.textContent = contestant.userVotes;
+                }
+            });
+        }
+
+        // --- Firebase Realtime Database Operations ---
+        /**
+         * Handles the voting process for a specific contestant, using a Realtime Database transaction
+         * for atomic increments.
+         * @param {string} voteKey - The key of the contestant to vote for (e.g., "vote1").
+         */
+        async function voteForContestant(voteKey) {
+            console.log(`voteForContestant() called for ${voteKey}. Votes left: ${votesLeft}`);
+            if (votesLeft <= 0) {
+                if (alertOverlay) { // Ensure alert element exists
+                    alertOverlay.classList.add("show");
+                }
+                console.warn("Vote limit reached. Cannot vote.");
+                return;
+            }
+
+            // Reference to the specific contestant's vote count within the 'votes' object
+            const contestantVoteRef = votesRef.child(voteKey);
+
+            // Use a transaction to safely increment the vote count
+            contestantVoteRef.transaction((currentCount) => {
+                console.log(`Transaction for ${voteKey}: currentCount = ${currentCount}`);
+                // If currentCount is null (first vote) or not a number, initialize to 0.
+                // Then, increment it by 1.
+                return (currentCount || 0) + 1;
+            }, (error, committed, snapshot) => {
+                if (error) {
+                    console.error("Realtime DB Transaction failed: ", error);
+                    // Optionally: Show an error message to the user
+                } else if (committed) {
+                    console.log(`Transaction for ${voteKey} committed successfully. New value: ${snapshot.val()}`);
+                    // If the transaction was successful and committed to the database
+                    const contestant = contestants.find(c => c.key === voteKey);
+                    if (contestant) {
+                        contestant.userVotes++; // Increment local user vote count
+                        votesLeft--; // Decrement overall votes left
+                        saveVotesLeft(); // Save updated local data
+                        updateVotesLeftUI(); // Update UI for votes left
+                        updateUserVotesUI(); // Update UI for individual contestant votes
+                    }
+                } else {
+                    console.log(`Transaction for ${voteKey} not committed (aborted or retried).`);
+                }
+            });
+        }
+
+        /**
+         * Sets up a real-time listener for changes at the 'votes' node in Realtime Database.
+         * This updates the percentage bars whenever a vote is cast by any user.
+         */
+        function listenForVoteUpdates() {
+            console.log("listenForVoteUpdates() called. Setting up real-time listener.");
+            votesRef.on("value", (snapshot) => {
+                const votes = snapshot.val(); // Get the entire data object at the 'votes' node
+                console.log("Realtime DB 'value' event received. Data:", votes);
+                if (votes && typeof votes === 'object' && Object.keys(votes).length > 0) {
+                    updateVoteBars(votes); // Update UI with current votes
+                } else {
+                    // If no data exists at the 'votes' node yet, or it's not a valid object, show all zeros
+                    console.warn("No 'votes' data or invalid data type found in Realtime DB. Initializing vote bars to zeros.");
+                    const zeroVotes = {};
+                    contestants.forEach(c => zeroVotes[c.key] = 0);
+                    updateVoteBars(zeroVotes);
+                }
+            }, (error) => {
+                console.error("Error reading Realtime Database: ", error);
+                // Handle database read errors, e.g., show a user-friendly message
+            });
+        }
+
+        // --- Initialization ---
+        /**
+         * Initializes the entire application when the DOM is fully loaded.
+         * - Resets votes if a new day.
+         * - Creates voting cards.
+         * - Updates user-specific vote displays.
+         * - Starts listening for Realtime Database updates.
+         */
+        function initApp() {
+            console.log("App initialization started.");
+            resetVotesIfNeeded(); // Ensures votes are reset if new day, or loaded if same day
+            createVoteCards(); // Uses the current state of votesLeft and contestant.userVotes
+            updateUserVotesUI(); // Updates the UI for individual votes
+            listenForVoteUpdates(); // Starts listening for global vote changes
+            // A final call to updateVotesLeftUI here ensures the display is correct after all initializations
+            updateVotesLeftUI();
+        }
+
+        // Initialize the app when the DOM is fully loaded
+        document.addEventListener("DOMContentLoaded", initApp);
+    </script>
+</body>
+</html>
